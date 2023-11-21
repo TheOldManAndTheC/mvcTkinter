@@ -64,6 +64,11 @@ class ListSelectorWithProperties(ListSelector):
             Button(self._filterFrame, text=propertyEntry["buttonText"],
                    command=partial(self._buttonPressed, propertyKey),
                    tooltip=tooltip, packSide=tk.LEFT)
+            if "shortcut" in propertyEntry:
+                propertyEntry["binding"] = self.listbox.bind(
+                    propertyEntry["shortcut"],
+                    lambda event: self._buttonPressed(propertyKey)
+                )
         self._dataReturn = self.option("dataReturn")
         self.refresh()
 
@@ -100,6 +105,11 @@ class ListSelectorWithProperties(ListSelector):
                         .format(source[key][propertyKey])
             displayList.append(displayText)
         self._listVar.set(displayList)
+        self._tagColors()
+
+    def reset(self):
+        super().reset()
+        self._tagColors()
 
     def _buttonPressed(self, propertyKey):
         selections = self.value(mtk.SELECTED_ITEMS)
@@ -147,3 +157,36 @@ class ListSelectorWithProperties(ListSelector):
         self.refresh()
         self._notifyObservers(self, mtk.LIST_SELECTOR_PROPERTY_BUTTON_PRESSED,
                               invalidKey, propertyKey=propertyKey)
+
+    def _tagColors(self):
+        # TODO: option to blend colors for multiple properties
+        colorProperties = ["bg", "background", "fg", "foreground",
+                           "selectbackground", "selectforeground"]
+        source = self.value(mtk.SOURCE)
+        properties = self.value(mtk.PROPERTIES)
+        items = self._filteredItems()
+        for index in range(len(items)):
+            itemEntry = source[items[index]]
+            for propertyKey in properties:
+                if propertyKey not in itemEntry:
+                    for colorProperty in colorProperties:
+                        self.listbox.itemconfig(
+                            index,
+                            **{colorProperty: self.listbox.cget(colorProperty)}
+                        )
+                    continue
+                propertyEntry = properties[propertyKey]
+                for colorProperty in colorProperties:
+                    if colorProperty not in propertyEntry:
+                        continue
+                    self.listbox.itemconfig(
+                        index,
+                        **{colorProperty: propertyEntry[colorProperty]}
+                    )
+
+    def destroy(self) -> None:
+        for propertyKey in self._properties:
+            propertyEntry = self._properties[propertyKey]
+            if "shortcut" in propertyEntry:
+                self.listbox.unbind(propertyEntry["shortcut"], propertyEntry["binding"])
+        super().destroy()

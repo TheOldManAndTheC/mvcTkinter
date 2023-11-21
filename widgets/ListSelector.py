@@ -43,6 +43,8 @@ defaultOptions = {
 
 packTop = {"packAnchor": tk.NW, "packSide": tk.TOP}
 packLeft = {"packSide": tk.LEFT}
+packRight = {"packSide": tk.RIGHT}
+packBottom = {"packSide": tk.BOTTOM}
 fillX = {"packFill": tk.X}
 fillY = {"packFill": tk.Y}
 fillBoth = {"packFill": tk.BOTH}
@@ -88,13 +90,17 @@ class ListSelector(Frame):
                 **(packLeft | padx10)
             )
             Tooltip(clearFilterButton, text=self.option("filterButtonTooltip"))
+        self._listboxFrame = Frame(self, **(packTop | fillBoth | expand))
         self._listVar = Variable(self, value=[])
-        self.listbox = Listbox(self, listvariable=self._listVar,
+        self.listbox = Listbox(self._listboxFrame, listvariable=self._listVar,
                                **(packLeft | fillBoth | expand))
         self.listbox.config(self.optionsForTkWidget(self.listbox))
         self.listbox.registerObserver(self)
-        self._scrollbar = Scrollbar(self, scrollWidget=self.listbox, axis=tk.Y,
-                                    **(packTop | packLeft | fillY))
+        self._yscrollbar = Scrollbar(self._listboxFrame,
+                                     scrollWidget=self.listbox, axis=tk.Y,
+                                    **(packRight | fillY))
+        self._xscrollbar = Scrollbar(self, scrollWidget=self.listbox, axis=tk.X,
+                                    **(packBottom | fillX))
         self._source = None
         self.setValue(self.option(mtk.SOURCE), mtk.SOURCE)
 

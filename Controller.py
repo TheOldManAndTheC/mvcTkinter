@@ -108,6 +108,8 @@ class Controller(OptionsMixin):
                 return fileIO.currentDir()
             case "pathExists":
                 return fileIO.pathExists(**kwargs)
+            case "listDir":
+                return fileIO.listDirectory(**kwargs)
             case "latestFile":
                 return fileIO.latestFile(**kwargs)
             case "readFile":
@@ -128,6 +130,8 @@ class Controller(OptionsMixin):
                 fileIO.deleteDirectory(**kwargs)
             case "copyFile":
                 fileIO.copyFile(**kwargs)
+            case "moveFile":
+                fileIO.moveFile(**kwargs)
             case "deleteFile":
                 fileIO.deleteFile(**kwargs)
             case "writeFile":

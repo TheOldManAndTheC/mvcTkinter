@@ -74,6 +74,18 @@ def deleteDirectory(directory):
         shutil.rmtree(directory, ignore_errors=True)
 
 
+# List directory
+def listDirectory(directory, listFiles=True, listDirectories=True):
+    print(directory)
+    if not os.path.exists(directory) or not os.path.isdir(directory):
+        return None
+    paths = [path for path in os.listdir(directory)
+             if (listFiles and os.path.isfile(os.path.join(directory, path))) or
+                 (listDirectories and
+                  os.path.isdir(os.path.join(directory, path)))]
+    return paths
+
+
 # Return the most recently modified file in a directory with optional extension
 def latestFile(directory, extension=""):
     if not directory:
@@ -92,6 +104,11 @@ def copyFile(source, destination):
         shutil.copy(source, destination)
     except shutil.SameFileError:
         pass
+
+
+# Move a file in the filesystem
+def moveFile(source, destination):
+    shutil.move(source, destination)
 
 
 # Delete a file from the filesystem
