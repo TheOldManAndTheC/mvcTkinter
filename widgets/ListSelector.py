@@ -95,6 +95,11 @@ class ListSelector(Frame):
         self.listbox = Listbox(self._listboxFrame, listvariable=self._listVar,
                                **(packLeft | fillBoth | expand))
         self.listbox.config(self.optionsForTkWidget(self.listbox))
+        if self.listbox.cget("selectmode") == tk.BROWSE:
+            self._moveBinding = self.listbox.bind("<B1-Motion>",
+                                                  self._moveSelection)
+        else:
+            self._moveBinding = None
         self.listbox.registerObserver(self)
         self._yscrollbar = Scrollbar(self._listboxFrame,
                                      scrollWidget=self.listbox, axis=tk.Y,
@@ -151,6 +156,8 @@ class ListSelector(Frame):
             self._filterVar.unregisterObserver(self)
         if self._filterBinding is not None:
             self._filterEntry.unbind("<Escape>", self._filterBinding)
+        if self._moveBinding is not None:
+            self.listbox.unbind("<B1-Motion>", self._moveBinding)
         super().destroy()
 
     def _filteredItems(self):
@@ -166,6 +173,30 @@ class ListSelector(Frame):
                     continue
                 itemList.append(item)
         return itemList
+
+    def _moveSelection(self, event):
+        if self._filterVar is not None and self._filterVar.get():
+            return
+        source = self.value(mtk.SOURCE)
+        if source is None:
+            return
+        currentIndex = self.value(mtk.SELECTION)[0]
+        newIndex = self.listbox.nearest(event.y)
+        if currentIndex == newIndex:
+            return
+        if isinstance(source, list):
+            movedItem = source[currentIndex]
+            source.pop(currentIndex)
+            source.insert(newIndex, movedItem)
+        if isinstance(source, dict):
+            items = list(source.items())
+            movedItem = items[currentIndex]
+            items.pop(currentIndex)
+            items.insert(newIndex, movedItem)
+            source.clear()
+            source.update(items)
+        self.refresh()
+        self._notifyObservers(self, mtk.LIST_SELECTOR_REORDERED)
 
     # Listbox method signatures from tkinter __init__.py
     def see(self, index):
