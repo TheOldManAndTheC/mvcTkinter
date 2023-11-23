@@ -76,7 +76,6 @@ def deleteDirectory(directory):
 
 # List directory
 def listDirectory(directory, listFiles=True, listDirectories=True):
-    print(directory)
     if not os.path.exists(directory) or not os.path.isdir(directory):
         return None
     paths = [path for path in os.listdir(directory)
