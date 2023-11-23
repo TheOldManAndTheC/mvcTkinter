@@ -45,6 +45,3 @@ class Scrollbar(MVCWidget, ttk.Scrollbar):
                     self["orient"] = tk.VERTICAL
                     self["command"] = self._scrollWidget.yview
                     self._scrollWidget["yscrollcommand"] = self.set
-
-    def setState(self, state, key=None):
-        self["state"] = state
