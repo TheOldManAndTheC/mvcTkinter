@@ -75,6 +75,11 @@ class Model(OptionsMixin):
     def _pathExists(self, path):
         return self._dataForModel("pathExists", path=path)
 
+    def _listDir(self, directory, listFiles=True, listDirectories=True):
+        return self._dataForModel("listDir", directory=directory,
+                                  listFiles=listFiles,
+                                  listDirectories=listDirectories)
+
     def _latestFile(self, directory, extension=""):
         return self._dataForModel("latestFile", directory=directory,
                                   extension=extension)
@@ -96,6 +101,9 @@ class Model(OptionsMixin):
 
     def _copyFile(self, source, destination):
         self._modelUpdated("copyFile", source=source, destination=destination)
+
+    def _moveFile(self, source, destination):
+        self._modelUpdated("moveFile", source=source, destination=destination)
 
     def _deleteFile(self, file):
         self._modelUpdated("deleteFile", file=file)
