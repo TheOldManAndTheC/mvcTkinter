@@ -163,6 +163,8 @@ class ListSelectorWithProperties(ListSelector):
         colorProperties = ["bg", "background", "fg", "foreground",
                            "selectbackground", "selectforeground"]
         source = self.value(mtk.SOURCE)
+        if isinstance(source, list):
+            return
         properties = self.value(mtk.PROPERTIES)
         items = self._filteredItems()
         for index in range(len(items)):

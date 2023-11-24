@@ -38,7 +38,8 @@ defaultOptions = {
     "filterTooltip": "Enter text to filter the display of items in the "
                      "panel below.",
     "filterButton": "Clear Filter",
-    "filterButtonTooltip": "Clear the filter for this pane."
+    "filterButtonTooltip": "Clear the filter for this pane.",
+    "allowReorder": True,
 }
 
 packTop = {"packAnchor": tk.NW, "packSide": tk.TOP}
@@ -95,7 +96,8 @@ class ListSelector(Frame):
         self.listbox = Listbox(self._listboxFrame, listvariable=self._listVar,
                                **(packLeft | fillBoth | expand))
         self.listbox.config(self.optionsForTkWidget(self.listbox))
-        if self.listbox.cget("selectmode") == tk.BROWSE:
+        if self.option("allowReorder") and \
+                self.listbox.cget("selectmode") == tk.BROWSE:
             self._moveBinding = self.listbox.bind("<B1-Motion>",
                                                   self._moveSelection)
         else:
