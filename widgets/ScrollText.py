@@ -21,6 +21,7 @@
 # TODO: add horizontal scrollbar? show/hide scrollbars?
 
 import tkinter as tk
+from ..core import constants as mtk
 from .base.Frame import Frame
 from .base.Text import Text
 from .base.Scrollbar import Scrollbar
@@ -44,14 +45,19 @@ class ScrollText(Frame):
         super().__init__(parent, **options)
         self.text = Text(self, **textOptions)
         self.text.config(self.optionsForTkWidget(self.text))
+        self.text.setValue(self.option("enableEdit", True),
+                           mtk.ENABLE_EDIT)
         self.scrollbar = Scrollbar(self, scrollWidget=self.text,
                                    **scrollbarOptions)
 
     def value(self, key=None):
-        return self.text.value()
+        return self.text.value(key)
 
     def setValue(self, value, key=None):
         self.text.setValue(value, key)
+
+    def reset(self):
+        self.setValue(self._valueFromController())
 
     # Text method signatures from tkinter __init__.py
     def bbox(self, index):
