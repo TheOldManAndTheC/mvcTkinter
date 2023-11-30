@@ -128,6 +128,8 @@ class Controller(OptionsMixin):
                 fileIO.createDirectory(**kwargs)
             case "deleteDir":
                 fileIO.deleteDirectory(**kwargs)
+            case "copyDir":
+                fileIO.copyDirectory(**kwargs)
             case "copyFile":
                 fileIO.copyFile(**kwargs)
             case "moveFile":

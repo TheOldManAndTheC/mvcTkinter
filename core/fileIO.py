@@ -85,6 +85,11 @@ def listDirectory(directory, listFiles=True, listDirectories=True):
     return paths
 
 
+# Copy directory
+def copyDirectory(source, destination, existOK=False):
+    shutil.copytree(source, destination, dirs_exist_ok=existOK)
+
+
 # Return the most recently modified file in a directory with optional extension
 def latestFile(directory, extension=""):
     if not directory:

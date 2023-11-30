@@ -99,6 +99,10 @@ class Model(OptionsMixin):
     def _deleteDir(self, directory):
         self._modelUpdated("deleteDir", directory=directory)
 
+    def _copyDir(self, source, destination, existOK=False):
+        self._modelUpdated("copyDir", source=source,
+                           destination=destination, existOK=existOK)
+
     def _copyFile(self, source, destination):
         self._modelUpdated("copyFile", source=source, destination=destination)
 
