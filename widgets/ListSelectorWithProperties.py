@@ -169,22 +169,28 @@ class ListSelectorWithProperties(ListSelector):
         items = self._filteredItems()
         for index in range(len(items)):
             itemEntry = source[items[index]]
+            # start with default colors for the listbox
+            for colorProperty in colorProperties:
+                self.listbox.itemconfig(
+                    index,
+                    **{colorProperty: self.listbox.cget(colorProperty)}
+                )
+            tagColors = dict()
+            # merge in tag color entries from properties, later entries will
+            # overwrite earlier ones
             for propertyKey in properties:
                 if propertyKey not in itemEntry:
-                    for colorProperty in colorProperties:
-                        self.listbox.itemconfig(
-                            index,
-                            **{colorProperty: self.listbox.cget(colorProperty)}
-                        )
                     continue
-                propertyEntry = properties[propertyKey]
-                for colorProperty in colorProperties:
-                    if colorProperty not in propertyEntry:
-                        continue
-                    self.listbox.itemconfig(
-                        index,
-                        **{colorProperty: propertyEntry[colorProperty]}
-                    )
+                colorEntries = {key: properties[propertyKey][key]
+                                for key in colorProperties
+                                if key in properties[propertyKey]}
+                tagColors |= colorEntries
+            # set any new color properties
+            for colorProperty in tagColors:
+                self.listbox.itemconfig(
+                    index,
+                    **{colorProperty: tagColors[colorProperty]}
+                )
 
     def destroy(self) -> None:
         for propertyKey in self._properties:
